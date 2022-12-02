@@ -1,0 +1,41 @@
+name: NodeJS image deploing
+
+on:
+  push:
+    branches:
+      - main
+env:
+  NODE_VERSION: '14.x'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub Actions'
+        uses: actions/checkout@main
+
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 'npm install and build'
+        run: |
+          npm install
+          npm run build --if-present
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub Actions'
+        uses: actions/checkout@main
+
+      - name: Setup Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 'npm install, build, and test'
+        run: |
+          npm install
+          npm run build --if-present
+          npm run test --if if-present
