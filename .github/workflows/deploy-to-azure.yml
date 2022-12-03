@@ -13,15 +13,15 @@ jobs:
   build-container-image:
     runs-on: ubuntu-latest
     steps:
-    - name: 'Checkout GitHub Action'
+    - name: Checkout GitHub Action
       uses: actions/checkout@main
       
-    - name: 'Login via Azure CLI'
+    - name: Login via Azure CLI
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
-    - name: 'Build and Push Image to ACR'
+    - name: Build and Push Image to ACR
       uses: azure/docker-login@v1
       with:
         login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
@@ -31,8 +31,9 @@ jobs:
         docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/imageresizer:${{ github.sha }}
         docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/imageresizer:${{ github.sha }}
 
-    - name: 'Deploy to Azure Container Instances'
-      uses: 'azure/aci-deploy@v1'
+
+    - name: Deploy to Azure Container Instances
+      uses: azure/aci-deploy@v1
       with:
         resource-group: ${{ secrets.RESOURCE_GROUP }}
         dns-name-label: ${{ secrets.RESOURCE_GROUP }}${{ github.run_number }}
@@ -42,3 +43,7 @@ jobs:
         registry-password: ${{ secrets.REGISTRY_PASSWORD }}
         name: aci-imageresizer
         location: 'norwayeast'
+
+    - name: Azure logout
+        run: |
+          az logout
