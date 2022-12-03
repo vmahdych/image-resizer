@@ -45,5 +45,5 @@ jobs:
         location: 'norwayeast'
 
     - name: Azure logout
-        run: |
-          az logout
+      run: |
+        az logout
