@@ -5,7 +5,14 @@
 - [x] Job 1 - Setup environment: Storage account and Container Registry
 - [x] Job 2 - Build / Push to ACR: build image, scan image, and push image to ACR
 - [x] Job 3 - Deploy to ACI
-- [x] Make sure Docker file is [secure](https://dev.to/tomoyamachi/how-to-keep-secure-your-docker-image-2hj2) enough
+- [ ] Make sure Docker file is [secure](https://dev.to/tomoyamachi/how-to-keep-secure-your-docker-image-2hj2) enough
+
+
+
+## What to test tomorrow on meeting:
+- Update the Docker file 
+  - Change *FROM:* (to alpine)
+  - Create separate user for the app
 
 
 ### Useful resources:
