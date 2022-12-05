@@ -5,6 +5,7 @@
 - [x] Job 1 - Setup environment: Storage account and Container Registry
 - [x] Job 2 - Build / Push to ACR: build image, scan image, and push image to ACR
 - [x] Job 3 - Deploy to ACI
+- [x] Make sure Docker file is [secure](https://dev.to/tomoyamachi/how-to-keep-secure-your-docker-image-2hj2) enough
 
 
 ### Useful resources:
@@ -24,11 +25,11 @@
   ```
 - Create resourceGroup:
   ```bash
-  az group create --name RG_NAME --location SUITABLE_LOCATION
+  az group create --name <RG_NAME> --location <SUITABLE_LOCATION>
   ```
 - Create ACR:
   ```bash
-  az acr create --resource-group RG_NAME -n ACR_NAME --sku Basic
+  az acr create --resource-group <RG_NAME> -n <ACR_NAME> --sku Basic
   ```
 -  Create a service principal for GitHub Actions workflow:
   ```bash
@@ -47,3 +48,20 @@
   ```bash
   az role assignment create --assignee <ClientId> --scope $registryId --role AcrPull
   ```
+
+
+### Issues I've faced with during the workflows creation:
+
+- The ImageResizer app itself :smile:
+  - Does not work on the latest node version;
+  - Tests fail all the time;
+- During deploing the process failed firs time. Error below:
+  *Error: The subscription is not registered to use namespace 'Microsoft.ContainerInstance'*
+
+
+### Just a thoughts of how the workflow can be improved:
+
+- [ ] Add lint test for the "start.yml" workflow;
+- [ ] Add an event to trigger workflows after adding tag to the app;
+- [ ] Divide "deploy-to-azure.yml" jobs by *needs* keyword so the deploing will trigger after successful image build only.
+
