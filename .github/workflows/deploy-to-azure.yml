@@ -8,6 +8,7 @@ on:
   
 env:
   NODE_VERSION: '14.x'
+  resourseGroup: VikingImResizer
 
 jobs:
   build-container-image:
@@ -21,15 +22,23 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
-    - name: Build and Push Image to ACR
+    - name: Docker login
       uses: azure/docker-login@v1
       with:
         login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
-    - run: |
-        docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/imageresizer:${{ github.sha }}
-        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/imageresizer:${{ github.sha }}
+    
+    - name: Build image resizer API
+      run: docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/imageresizer:${{ github.sha }}
+    
+    - name: Scan image resizer API Container
+      uses: jldeen/container-scan@releases/v1
+      with:
+        image-name: ${{ secrets.REGISTRY_LOGIN_SERVER }}/imageresizer:${{ github.sha }}
+
+    - name: Push image resizer API
+      run: docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/imageresizer:${{ github.sha }}
 
 
   deploy-to-aci:
@@ -48,8 +57,8 @@ jobs:
     - name: Deploy to Azure Container Instances
       uses: azure/aci-deploy@v1
       with:
-        resource-group: ${{ secrets.RESOURCE_GROUP }}
-        dns-name-label: ${{ secrets.RESOURCE_GROUP }}${{ github.run_number }}
+        resource-group: ${{ env.resourseGroup }}
+        dns-name-label: ${{ env.resourseGroup }}${{ github.run_number }}
         image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/imageresizer:${{ github.sha }}
         registry-login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
         registry-username: ${{ secrets.REGISTRY_USERNAME }}
